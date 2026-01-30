@@ -1,0 +1,78 @@
+[package]
+name = "cyber-oscilloscope"
+version = "0.1.0"
+edition = "2021"
+authors = ["Cyber-Oscilloscope Team"]
+description = "High-performance audio visualizer with wave physics using Rust/WGPU/WebAssembly"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["console_error_panic_hook"]
+
+[dependencies]
+wgpu = { version = "0.19", features = ["webgpu"] }
+wasm-bindgen = "0.2.92"
+wasm-bindgen-futures = "0.4.42"
+js-sys = "0.3.69"
+console_error_panic_hook = { version = "0.1.7", optional = true }
+console_log = "1.0"
+log = "0.4"
+bytemuck = { version = "1.14", features = ["derive"] }
+
+[dependencies.web-sys]
+version = "0.3.69"
+features = [
+    "console",
+    "Window",
+    "Document",
+    "Element",
+    "HtmlCanvasElement",
+    "CanvasRenderingContext2d",
+    "Navigator",
+    "Gpu",
+    "GpuAdapter",
+    "GpuDevice",
+    "GpuQueue",
+    "GpuCanvasContext",
+    "GpuTextureFormat",
+    "GpuCanvasConfiguration",
+    "GpuTexture",
+    "GpuTextureView",
+    "GpuCommandEncoder",
+    "GpuCommandBuffer",
+    "GpuRenderPassEncoder",
+    "GpuRenderPipeline",
+    "GpuShaderModule",
+    "GpuBuffer",
+    "gpu_buffer_usage",
+    "GpuVertexState",
+    "GpuFragmentState",
+    "GpuPrimitiveState",
+    "GpuColorTargetState",
+    "GpuRenderPassDescriptor",
+    "GpuRenderPassColorAttachment",
+    "GpuBindGroup",
+    "GpuBindGroupLayout",
+    "GpuBindGroupDescriptor",
+    "GpuBindGroupEntry",
+    "GpuBufferBinding",
+    "GpuPipelineLayout",
+    "GpuPipelineLayoutDescriptor",
+    "GpuVertexBufferLayout",
+    "GpuVertexAttribute",
+    "GpuVertexFormat",
+    "GpuShaderModuleDescriptor",
+    "GpuRenderPipelineDescriptor",
+    "GpuBufferDescriptor",
+    "gpu_map_mode",
+    "Performance",
+]
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.42"
+
+[profile.release]
+opt-level = 3
+lto = true

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Ripple-Oscilloscope: High-performance audio visualizer with GPU-accelerated wave physics">
+    <title>Ripple-Oscilloscope | Audio Visualizer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Main Canvas (WGPU/WebGPU Rendering) -->
+    <canvas id="visualizer-canvas"></canvas>
+
+    <!-- HUD Overlay -->
+    <div class="hud-container">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="logo">
+                <span class="logo-icon">◈</span>
+                <span class="logo-text">RIPPLE<span class="highlight">OSCILLOSCOPE</span></span>
+            </div>
+            <div class="status-indicators">
+                <div class="status-item" id="fps-display">
+                    <span class="status-label">FPS</span>
+                    <span class="status-value" id="fps-value">60</span>
+                </div>
+                <div class="status-item" id="audio-status">
+                    <span class="status-label">AUDIO</span>
+                    <span class="status-value status-inactive" id="audio-value">OFF</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Control Panel -->
+        <aside class="control-panel">
+            <div class="panel-header">
+                <span class="panel-icon">⚡</span>
+                <span class="panel-title">WAVE CONTROL</span>
+            </div>
+
+            <!-- Audio Controls -->
+            <section class="control-section">
+                <h3 class="section-title">AUDIO INPUT</h3>
+                <button class="cyber-button primary" id="btn-audio">
+                    <span class="button-icon">🎤</span>
+                    <span class="button-text">ENABLE MICROPHONE</span>
+                </button>
+            </section>
+
+            <!-- Mode Selection -->
+            <section class="control-section">
+                <h3 class="section-title">VISUALIZATION MODE</h3>
+                <div class="mode-grid">
+                    <button class="mode-button active" data-mode="0">
+                        <span class="mode-icon">∿</span>
+                        <span class="mode-name">SINE</span>
+                    </button>
+                    <button class="mode-button" data-mode="1">
+                        <span class="mode-icon">◎</span>
+                        <span class="mode-name">RIPPLE</span>
+                    </button>
+                    <button class="mode-button" data-mode="2">
+                        <span class="mode-icon">∞</span>
+                        <span class="mode-name">LISSAJOUS</span>
+                    </button>
+                    <button class="mode-button" data-mode="3">
+                        <span class="mode-icon">≋</span>
+                        <span class="mode-name">PLASMA</span>
+                    </button>
+                    <button class="mode-button" data-mode="4">
+                        <span class="mode-icon">◇</span>
+                        <span class="mode-name">SURFACE</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Wave Parameters -->
+            <section class="control-section">
+                <h3 class="section-title">PARAMETERS</h3>
+
+                <div class="slider-group">
+                    <label class="slider-label">
+                        <span>AMPLITUDE</span>
+                        <span class="slider-value" id="amplitude-value">1.0</span>
+                    </label>
+                    <input type="range" class="cyber-slider" id="amplitude" min="0.1" max="2" step="0.1" value="1">
+                </div>
+
+                <div class="slider-group">
+                    <label class="slider-label">
+                        <span>FREQUENCY</span>
+                        <span class="slider-value" id="frequency-value">3.0</span>
+                    </label>
+                    <input type="range" class="cyber-slider" id="frequency" min="0.5" max="10" step="0.5" value="3">
+                </div>
+
+                <div class="slider-group">
+                    <label class="slider-label">
+                        <span>SPEED</span>
+                        <span class="slider-value" id="speed-value">1.0</span>
+                    </label>
+                    <input type="range" class="cyber-slider" id="speed" min="0.1" max="3" step="0.1" value="1">
+                </div>
+
+                <div class="slider-group">
+                    <label class="slider-label">
+                        <span>HUE</span>
+                        <span class="slider-value" id="hue-value">180°</span>
+                    </label>
+                    <input type="range" class="cyber-slider hue-slider" id="hue" min="0" max="360" step="5" value="180">
+                </div>
+            </section>
+
+            <!-- Frequency Visualizer -->
+            <section class="control-section">
+                <h3 class="section-title">FREQUENCY SPECTRUM</h3>
+                <div class="frequency-bars" id="frequency-bars">
+                    <div class="freq-bar" style="--bar-index: 0;"></div>
+                    <div class="freq-bar" style="--bar-index: 1;"></div>
+                    <div class="freq-bar" style="--bar-index: 2;"></div>
+                    <div class="freq-bar" style="--bar-index: 3;"></div>
+                    <div class="freq-bar" style="--bar-index: 4;"></div>
+                    <div class="freq-bar" style="--bar-index: 5;"></div>
+                    <div class="freq-bar" style="--bar-index: 6;"></div>
+                    <div class="freq-bar" style="--bar-index: 7;"></div>
+                    <div class="freq-bar" style="--bar-index: 8;"></div>
+                    <div class="freq-bar" style="--bar-index: 9;"></div>
+                    <div class="freq-bar" style="--bar-index: 10;"></div>
+                    <div class="freq-bar" style="--bar-index: 11;"></div>
+                </div>
+            </section>
+        </aside>
+
+        <!-- Amplitude Meter (Right Side) -->
+        <aside class="amplitude-meter">
+            <div class="meter-label">AMP</div>
+            <div class="meter-bar">
+                <div class="meter-fill" id="amplitude-meter"></div>
+                <div class="meter-glow"></div>
+            </div>
+            <div class="meter-scale">
+                <span>0</span>
+                <span>MAX</span>
+            </div>
+        </aside>
+
+        <!-- Bottom Info Bar -->
+        <footer class="bottom-bar">
+            <div class="info-left">
+                <span class="info-label">RESOLUTION:</span>
+                <span class="info-value" id="resolution-display">1920 × 1080</span>
+            </div>
+            <div class="info-center">
+                <span class="info-label">RENDER:</span>
+                <span class="info-value">WebGPU / WGSL</span>
+            </div>
+            <div class="info-right">
+                <span class="info-label">ENGINE:</span>
+                <span class="info-value">RUST / WASM</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">INITIALIZING WGPU ENGINE</div>
+            <div class="loading-progress">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="error-modal" id="error-modal">
+        <div class="error-content">
+            <div class="error-icon">⚠</div>
+            <h2 class="error-title">WebGPU Not Supported</h2>
+            <p class="error-message">Your browser does not support WebGPU. Please use Chrome 121+, Edge 121+, or Firefox
+                Nightly.</p>
+            <a href="https://caniuse.com/webgpu" target="_blank" class="cyber-button">Learn More</a>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+</body>
+
+</html>
