@@ -14,7 +14,7 @@
 
 Unlike traditional canvas visualizers, this project renders millions of operations per second directly on your GPU using **WGSL shaders**. The result is a fluid, 60fps experience that transforms your audio into stunning 3D wave physics simulations.
 
-![Ripple Oscilloscope](./assets/Ripple-Oscilloscope.jpg)
+![Ripple Oscilloscope](./assets/Ripple-Oscilloscope.JPG)
 ## ✨ Key Features
 
 ### 🌊 5 Physics-Based Visualizers
@@ -111,4 +111,5 @@ graph TD
 
 ⭐ **Star us on GitHub** ⭐
 </div>
+
 
