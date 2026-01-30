@@ -1,6 +1,5 @@
 # ◈ RIPPLE-OSCILLOSCOPE ◈
 
-![License](https://img.shields.io/badge/license-MIT-cyan?style=for-the-badge)
 ![Rust](https://img.shields.io/badge/Built_With-Rust-orange?style=for-the-badge&logo=rust)
 ![WebAssembly](https://img.shields.io/badge/Powered_By-WebAssembly-purple?style=for-the-badge&logo=webassembly)
 ![WebGPU](https://img.shields.io/badge/Rendered_With-WebGPU-blue?style=for-the-badge&logo=opengl)
@@ -112,3 +111,4 @@ graph TD
 
 ⭐ **Star us on GitHub** ⭐
 </div>
+
